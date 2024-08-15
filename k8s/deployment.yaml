@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: your-client-image
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server01
+  template:
+    metadata:
+      labels:
+        app: server01
+    spec:
+      containers:
+      - name: server01
+        image: your-server-image
+        ports:
+        - containerPort: 5000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server02
+  template:
+    metadata:
+      labels:
+        app: server02
+    spec:
+      containers:
+      - name: server02
+        image: your-server-image
+        ports:
+        - containerPort: 5000

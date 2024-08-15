@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client-Server Communication</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <button id="startButton">Start System</button>
+    <div id="logWindow"></div>
+    <button id="server01Crash" style="display:none;">Server01 Crash</button>
+    <button id="server02Crash" style="display:none;">Server02 Crash</button>
+    <button id="server01Restart" style="display:none;">Server01 Restart</button>
+    <button id="server02Restart" style="display:none;">Server02 Restart</button>
+
+    <script>
+        let currentServer = 'http://server01:5000';
+        let intervalId;
+
+        document.getElementById('startButton').onclick = function() {
+            startSystem();
+        };
+
+        function startSystem() {
+            intervalId = setInterval(() => {
+                sendMessage(currentServer, "HI");
+            }, 1000);
+        }
+
+        function sendMessage(server, message) {
+            fetch(`${server}/message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                logMessage('client', server, message, '->', new Date().toLocaleTimeString());
+                logMessage(server, 'client', data.reply, '<-', new Date().toLocaleTimeString());
+            })
+            .catch(error => {
+                logMessage('Error', server, error.message, '->', new Date().toLocaleTimeString());
+                switchServer();
+            });
+        }
+
+        function switchServer() {
+            currentServer = currentServer === 'http://server01:5000' ? 'http://server02:5000' : 'http://server01:5000';
+        }
+
+        function logMessage(client, server, message, flow, timestamp) {
+            const logWindow = document.getElementById('logWindow');
+            logWindow.innerHTML += `<p>${client} | ${server} | ${message} | ${flow} | ${timestamp}</p>`;
+        }
+    </script>
+</body>
+</html>
